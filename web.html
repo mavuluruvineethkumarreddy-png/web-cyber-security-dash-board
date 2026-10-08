@@ -1,0 +1,2088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CyberShield - Cybersecurity Dashboard</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f1f5f9;
+    color: #172033;
+    transition: 0.3s;
+}
+
+body.dark {
+    background: #080d18;
+    color: #f8fafc;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ================= AUTH ================= */
+
+.auth {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #020617, #0f172a, #1e3a8a);
+}
+
+.auth-box {
+    width: 400px;
+    max-width: 92%;
+    background: white;
+    padding: 35px;
+    border-radius: 18px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+}
+
+.auth-box h1 {
+    text-align: center;
+    color: #2563eb;
+    margin-bottom: 5px;
+}
+
+.auth-box p {
+    text-align: center;
+    color: #64748b;
+    margin-bottom: 25px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    outline: none;
+}
+
+.password-box {
+    position: relative;
+}
+
+.password-box button {
+    position: absolute;
+    right: 8px;
+    top: 7px;
+    background: transparent;
+    font-size: 18px;
+}
+
+.primary-btn {
+    width: 100%;
+    padding: 13px;
+    background: #2563eb;
+    color: white;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.auth-switch {
+    text-align: center;
+    margin-top: 18px;
+    color: #2563eb;
+    cursor: pointer;
+}
+
+/* ================= NAVBAR ================= */
+
+.navbar {
+    height: 65px;
+    background: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 22px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.dark .navbar {
+    background: #111827;
+}
+
+.logo {
+    font-size: 21px;
+    font-weight: bold;
+    color: #2563eb;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.icon-btn {
+    padding: 10px;
+    border-radius: 8px;
+    background: #e0e7ff;
+}
+
+.logout {
+    padding: 10px 15px;
+    background: #ef4444;
+    color: white;
+    border-radius: 8px;
+}
+
+/* ================= LAYOUT ================= */
+
+.layout {
+    display: flex;
+}
+
+.sidebar {
+    width: 230px;
+    min-height: calc(100vh - 65px);
+    background: #020617;
+    color: white;
+    position: fixed;
+    top: 65px;
+    left: 0;
+    padding: 18px 12px;
+}
+
+.sidebar button {
+    width: 100%;
+    padding: 13px;
+    margin-bottom: 5px;
+    background: transparent;
+    color: white;
+    text-align: left;
+    border-radius: 8px;
+}
+
+.sidebar button:hover,
+.sidebar button.active {
+    background: #2563eb;
+}
+
+.main {
+    margin-left: 230px;
+    width: calc(100% - 230px);
+    padding: 25px;
+}
+
+.page-title {
+    margin-bottom: 20px;
+}
+
+.page-title h2 {
+    font-size: 27px;
+}
+
+.page-title p {
+    color: #64748b;
+    margin-top: 5px;
+}
+
+/* ================= CARDS ================= */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.stat {
+    background: white;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.06);
+}
+
+.dark .stat,
+.dark .card,
+.dark .threat-card {
+    background: #111827;
+}
+
+.stat h4 {
+    color: #64748b;
+}
+
+.stat strong {
+    display: block;
+    font-size: 30px;
+    margin-top: 8px;
+    color: #2563eb;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.06);
+    margin-bottom: 20px;
+}
+
+/* ================= SECURITY SCORE ================= */
+
+.security-score {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.score-circle {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    border: 12px solid #22c55e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+/* ================= THREATS ================= */
+
+.search-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.search-bar input,
+.search-bar select {
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+}
+
+.search-bar input {
+    flex: 1;
+}
+
+.threat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.threat-card {
+    background: white;
+    padding: 18px;
+    border-radius: 13px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.07);
+    border-left: 5px solid #ef4444;
+}
+
+.threat-card.medium {
+    border-left-color: #f59e0b;
+}
+
+.threat-card.low {
+    border-left-color: #22c55e;
+}
+
+.badge {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 15px;
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+.high {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.medium {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.low {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.threat-card p {
+    margin: 8px 0;
+    color: #64748b;
+}
+
+.threat-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.small-btn {
+    padding: 8px 12px;
+    background: #2563eb;
+    color: white;
+    border-radius: 7px;
+}
+
+.danger-btn {
+    background: #ef4444;
+}
+
+.success-btn {
+    background: #16a34a;
+}
+
+/* ================= TABLE ================= */
+
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 12px;
+    border-bottom: 1px solid #e2e8f0;
+    text-align: left;
+}
+
+th {
+    background: #eff6ff;
+}
+
+/* ================= PROFILE ================= */
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.avatar {
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    background: #2563eb;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 32px;
+}
+
+/* ================= NOTIFICATIONS ================= */
+
+.notification {
+    padding: 14px;
+    background: #eff6ff;
+    border-left: 4px solid #2563eb;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width: 950px) {
+
+    .stats {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .threat-grid {
+        grid-template-columns: repeat(2,1fr);
+    }
+}
+
+@media(max-width: 650px) {
+
+    .sidebar {
+        display: none;
+    }
+
+    .main {
+        margin-left: 0;
+        width: 100%;
+        padding: 15px;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .threat-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .navbar {
+        padding: 0 10px;
+    }
+
+    #welcomeUser {
+        display: none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= AUTH ================= -->
+
+<div id="auth" class="auth">
+
+    <div class="auth-box">
+
+        <h1>🛡️ CyberShield</h1>
+        <p id="authSubtitle">
+            Cybersecurity Threat Monitoring
+        </p>
+
+        <!-- LOGIN -->
+
+        <div id="loginForm">
+
+            <div class="input-group">
+                <label>Email</label>
+                <input
+                    id="loginEmail"
+                    type="email"
+                    placeholder="Enter email">
+            </div>
+
+            <div class="input-group">
+
+                <label>Password</label>
+
+                <div class="password-box">
+
+                    <input
+                        id="loginPassword"
+                        type="password"
+                        placeholder="Enter password">
+
+                    <button
+                        onclick="togglePassword('loginPassword')">
+                        👁️
+                    </button>
+
+                </div>
+
+            </div>
+
+            <button
+                class="primary-btn"
+                onclick="login()">
+                Login
+            </button>
+
+            <div
+                class="auth-switch"
+                onclick="showSignup()">
+                Create new account
+            </div>
+
+        </div>
+
+
+        <!-- SIGNUP -->
+
+        <div id="signupForm" class="hidden">
+
+            <div class="input-group">
+                <label>Name</label>
+                <input
+                    id="signupName"
+                    placeholder="Enter name">
+            </div>
+
+            <div class="input-group">
+                <label>Email</label>
+                <input
+                    id="signupEmail"
+                    type="email"
+                    placeholder="Enter email">
+            </div>
+
+            <div class="input-group">
+
+                <label>Password</label>
+
+                <div class="password-box">
+
+                    <input
+                        id="signupPassword"
+                        type="password"
+                        placeholder="Create password">
+
+                    <button
+                        onclick="togglePassword('signupPassword')">
+                        👁️
+                    </button>
+
+                </div>
+
+            </div>
+
+            <button
+                class="primary-btn"
+                onclick="signup()">
+                Create Account
+            </button>
+
+            <div
+                class="auth-switch"
+                onclick="showLogin()">
+                Already have an account? Login
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= APP ================= -->
+
+<div id="app" class="hidden">
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🛡️ CyberShield
+        </div>
+
+        <div class="nav-right">
+
+            <button
+                class="icon-btn"
+                onclick="toggleDark()">
+                🌙
+            </button>
+
+            <button
+                class="icon-btn"
+                onclick="showPage('notifications')">
+                🔔
+            </button>
+
+            <span id="welcomeUser"></span>
+
+            <button
+                class="logout"
+                onclick="logout()">
+                Logout
+            </button>
+
+        </div>
+
+    </nav>
+
+
+    <div class="layout">
+
+        <aside class="sidebar">
+
+            <button
+                class="active"
+                onclick="showPage('dashboard',this)">
+                📊 Dashboard
+            </button>
+
+            <button
+                onclick="showPage('threats',this)">
+                🚨 Threats
+            </button>
+
+            <button
+                onclick="showPage('network',this)">
+                🌐 Network
+            </button>
+
+            <button
+                onclick="showPage('logs',this)">
+                📋 Security Logs
+            </button>
+
+            <button
+                onclick="showPage('notifications',this)">
+                🔔 Notifications
+            </button>
+
+            <button
+                onclick="showPage('profile',this)">
+                👤 Profile
+            </button>
+
+            <button
+                onclick="showPage('admin',this)">
+                ⚙️ Admin
+            </button>
+
+        </aside>
+
+
+        <main class="main">
+
+            <!-- DASHBOARD -->
+
+            <section id="dashboard" class="page">
+
+                <div class="page-title">
+
+                    <h2>Security Dashboard</h2>
+
+                    <p>
+                        Real-time cybersecurity monitoring center
+                    </p>
+
+                </div>
+
+
+                <div class="stats">
+
+                    <div class="stat">
+
+                        <h4>Active Threats</h4>
+
+                        <strong id="activeThreats">
+                            0
+                        </strong>
+
+                    </div>
+
+                    <div class="stat">
+
+                        <h4>Blocked Attacks</h4>
+
+                        <strong id="blockedAttacks">
+                            0
+                        </strong>
+
+                    </div>
+
+                    <div class="stat">
+
+                        <h4>Monitored Devices</h4>
+
+                        <strong id="deviceCount">
+                            0
+                        </strong>
+
+                    </div>
+
+                    <div class="stat">
+
+                        <h4>Security Events</h4>
+
+                        <strong id="eventCount">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>🛡️ Overall Security Status</h3>
+
+                    <br>
+
+                    <div class="security-score">
+
+                        <div class="score-circle"
+                             id="securityScore">
+                            94
+                        </div>
+
+                        <div>
+
+                            <h2 id="securityStatus">
+                                Protected
+                            </h2>
+
+                            <p>
+                                Your network is currently
+                                being monitored.
+                            </p>
+
+                            <br>
+
+                            <span class="badge low">
+                                ● Systems Operational
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>🔥 Recent Threats</h3>
+
+                    <br>
+
+                    <div
+                        id="recentThreats"
+                        class="threat-grid">
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- THREATS -->
+
+            <section id="threats" class="page hidden">
+
+                <div class="page-title">
+
+                    <h2>🚨 Threat Monitoring</h2>
+
+                    <p>
+                        Detect and manage security threats.
+                    </p>
+
+                </div>
+
+
+                <div class="search-bar">
+
+                    <input
+                        id="threatSearch"
+                        placeholder="Search IP, threat or device..."
+                        oninput="renderThreats()">
+
+                    <select
+                        id="severityFilter"
+                        onchange="renderThreats()">
+
+                        <option value="All">
+                            All Severity
+                        </option>
+
+                        <option value="High">
+                            High
+                        </option>
+
+                        <option value="Medium">
+                            Medium
+                        </option>
+
+                        <option value="Low">
+                            Low
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div
+                    id="threatGrid"
+                    class="threat-grid">
+                </div>
+
+            </section>
+
+
+            <!-- NETWORK -->
+
+            <section id="network" class="page hidden">
+
+                <div class="page-title">
+
+                    <h2>🌐 Network Monitoring</h2>
+
+                    <p>
+                        Monitor connected devices and IP addresses.
+                    </p>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="table-container">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+                                    <th>Device</th>
+                                    <th>IP Address</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Risk</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="deviceTable"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- LOGS -->
+
+            <section id="logs" class="page hidden">
+
+                <div class="page-title">
+
+                    <h2>📋 Security Logs</h2>
+
+                    <p>
+                        System security activity.
+                    </p>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div
+                        id="logsContainer">
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- NOTIFICATIONS -->
+
+            <section id="notifications" class="page hidden">
+
+                <div class="page-title">
+
+                    <h2>🔔 Notifications</h2>
+
+                </div>
+
+                <div class="card">
+
+                    <div class="notification">
+                        🛡️ Security system is active.
+                    </div>
+
+                    <div class="notification">
+                        🔥 Suspicious login attempts detected.
+                    </div>
+
+                    <div class="notification">
+                        🌐 Network devices are being monitored.
+                    </div>
+
+                    <div class="notification">
+                        🔐 Remember to update passwords regularly.
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- PROFILE -->
+
+            <section id="profile" class="page hidden">
+
+                <div class="page-title">
+
+                    <h2>👤 Security Profile</h2>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="profile">
+
+                        <div
+                            class="avatar"
+                            id="avatar">
+                            U
+                        </div>
+
+                        <div>
+
+                            <h2 id="profileName"></h2>
+
+                            <p id="profileEmail"></p>
+
+                            <br>
+
+                            <span class="badge low">
+                                Authorized User
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>🔑 Change Password</h3>
+
+                    <br>
+
+                    <input
+                        id="newPassword"
+                        type="password"
+                        placeholder="New password"
+                        style="padding:11px;width:100%;max-width:400px;border:1px solid #ccc;border-radius:7px;">
+
+                    <br><br>
+
+                    <button
+                        class="small-btn"
+                        onclick="changePassword()">
+                        Update Password
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- ADMIN -->
+
+            <section id="admin" class="page hidden">
+
+                <div class="page-title">
+
+                    <h2>⚙️ Admin Dashboard</h2>
+
+                    <p>
+                        Security administration and analytics.
+                    </p>
+
+                </div>
+
+
+                <div class="stats">
+
+                    <div class="stat">
+
+                        <h4>Total Users</h4>
+
+                        <strong id="totalUsers">
+                            0
+                        </strong>
+
+                    </div>
+
+                    <div class="stat">
+
+                        <h4>Total Threats</h4>
+
+                        <strong id="totalThreats">
+                            0
+                        </strong>
+
+                    </div>
+
+                    <div class="stat">
+
+                        <h4>Blocked IPs</h4>
+
+                        <strong id="blockedIPs">
+                            0
+                        </strong>
+
+                    </div>
+
+                    <div class="stat">
+
+                        <h4>System</h4>
+
+                        <strong>ONLINE</strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>📈 Security Analytics</h3>
+
+                    <br>
+
+                    <p>
+                        Threat detection rate
+                    </p>
+
+                    <br>
+
+                    <div style="
+                        height:20px;
+                        background:#e5e7eb;
+                        border-radius:20px;
+                        overflow:hidden;">
+
+                        <div style="
+                            width:87%;
+                            height:100%;
+                            background:#2563eb;">
+                        </div>
+
+                    </div>
+
+                    <br>
+
+                    <p>
+                        87% of suspicious activities
+                        were automatically detected.
+                    </p>
+
+                </div>
+
+
+                <div class="card">
+
+                    <button
+                        class="small-btn"
+                        onclick="exportReport()">
+                        📥 Export Security Report
+                    </button>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   DATA
+========================= */
+
+let users =
+    JSON.parse(localStorage.getItem("cyberUsers")) || [
+
+        {
+            name: "Security Admin",
+            email: "admin@cybershield.com",
+            password: "admin123"
+        }
+
+    ];
+
+
+let threats =
+    JSON.parse(localStorage.getItem("cyberThreats")) || [
+
+        {
+            id: 1,
+            type: "Brute Force Attack",
+            ip: "185.22.91.45",
+            device: "Login Server",
+            severity: "High",
+            status: "Active"
+        },
+
+        {
+            id: 2,
+            type: "Port Scanning",
+            ip: "103.81.22.17",
+            device: "Web Server",
+            severity: "Medium",
+            status: "Active"
+        },
+
+        {
+            id: 3,
+            type: "Suspicious Login",
+            ip: "45.76.123.10",
+            device: "Admin Panel",
+            severity: "High",
+            status: "Active"
+        },
+
+        {
+            id: 4,
+            type: "Malware Detection",
+            ip: "192.168.1.45",
+            device: "Office PC",
+            severity: "High",
+            status: "Active"
+        },
+
+        {
+            id: 5,
+            type: "Unusual Traffic",
+            ip: "192.168.1.80",
+            device: "Router",
+            severity: "Low",
+            status: "Active"
+        }
+
+    ];
+
+
+let devices = [
+
+    {
+        name: "Core Router",
+        ip: "192.168.1.1",
+        type: "Router",
+        status: "Online",
+        risk: "Low"
+    },
+
+    {
+        name: "Web Server",
+        ip: "10.0.0.10",
+        type: "Server",
+        status: "Online",
+        risk: "Medium"
+    },
+
+    {
+        name: "Database Server",
+        ip: "10.0.0.20",
+        type: "Server",
+        status: "Online",
+        risk: "Low"
+    },
+
+    {
+        name: "Office PC",
+        ip: "192.168.1.45",
+        type: "Computer",
+        status: "Warning",
+        risk: "High"
+    },
+
+    {
+        name: "Security Firewall",
+        ip: "192.168.1.254",
+        type: "Firewall",
+        status: "Online",
+        risk: "Low"
+    }
+
+];
+
+
+let logs =
+    JSON.parse(localStorage.getItem("cyberLogs")) || [];
+
+let blockedIPs =
+    JSON.parse(localStorage.getItem("blockedIPs")) || [];
+
+let currentUser =
+    JSON.parse(localStorage.getItem("cyberCurrentUser")) || null;
+
+
+/* =========================
+   AUTH
+========================= */
+
+function showSignup() {
+
+    document
+        .getElementById("loginForm")
+        .classList.add("hidden");
+
+    document
+        .getElementById("signupForm")
+        .classList.remove("hidden");
+
+}
+
+
+function showLogin() {
+
+    document
+        .getElementById("signupForm")
+        .classList.add("hidden");
+
+    document
+        .getElementById("loginForm")
+        .classList.remove("hidden");
+
+}
+
+
+function togglePassword(id) {
+
+    const input =
+        document.getElementById(id);
+
+    input.type =
+        input.type === "password"
+        ? "text"
+        : "password";
+
+}
+
+
+function signup() {
+
+    const name =
+        document.getElementById("signupName").value.trim();
+
+    const email =
+        document.getElementById("signupEmail").value.trim();
+
+    const password =
+        document.getElementById("signupPassword").value;
+
+    if (!name || !email || !password) {
+
+        alert("Please fill all fields.");
+
+        return;
+
+    }
+
+    if (password.length < 6) {
+
+        alert(
+            "Password must contain at least 6 characters."
+        );
+
+        return;
+
+    }
+
+    if (
+        users.some(
+            u => u.email === email
+        )
+    ) {
+
+        alert("User already exists.");
+
+        return;
+
+    }
+
+    users.push({
+        name,
+        email,
+        password
+    });
+
+    save();
+
+    alert("Account created successfully!");
+
+    showLogin();
+
+}
+
+
+function login() {
+
+    const email =
+        document.getElementById("loginEmail").value.trim();
+
+    const password =
+        document.getElementById("loginPassword").value;
+
+    const user =
+        users.find(
+            u =>
+            u.email === email &&
+            u.password === password
+        );
+
+    if (!user) {
+
+        alert("Invalid email or password.");
+
+        return;
+
+    }
+
+    currentUser = user;
+
+    localStorage.setItem(
+        "cyberCurrentUser",
+        JSON.stringify(currentUser)
+    );
+
+    addLog(
+        "Successful login from " + email
+    );
+
+    startApp();
+
+}
+
+
+function logout() {
+
+    addLog(
+        "User logged out"
+    );
+
+    localStorage.removeItem(
+        "cyberCurrentUser"
+    );
+
+    currentUser = null;
+
+    document
+        .getElementById("app")
+        .classList.add("hidden");
+
+    document
+        .getElementById("auth")
+        .classList.remove("hidden");
+
+}
+
+
+/* =========================
+   APP
+========================= */
+
+function startApp() {
+
+    document
+        .getElementById("auth")
+        .classList.add("hidden");
+
+    document
+        .getElementById("app")
+        .classList.remove("hidden");
+
+    document
+        .getElementById("welcomeUser")
+        .innerText =
+        "Hi, " + currentUser.name;
+
+    renderDashboard();
+
+    renderThreats();
+
+    renderDevices();
+
+    renderLogs();
+
+    renderProfile();
+
+    renderAdmin();
+
+}
+
+
+/* =========================
+   PAGE NAVIGATION
+========================= */
+
+function showPage(page, button) {
+
+    document
+        .querySelectorAll(".page")
+        .forEach(
+            p => p.classList.add("hidden")
+        );
+
+    document
+        .getElementById(page)
+        .classList.remove("hidden");
+
+    document
+        .querySelectorAll(".sidebar button")
+        .forEach(
+            b => b.classList.remove("active")
+        );
+
+    if (button) {
+        button.classList.add("active");
+    }
+
+}
+
+
+/* =========================
+   DASHBOARD
+========================= */
+
+function renderDashboard() {
+
+    const active =
+        threats.filter(
+            t => t.status === "Active"
+        ).length;
+
+    document
+        .getElementById("activeThreats")
+        .innerText = active;
+
+    document
+        .getElementById("blockedAttacks")
+        .innerText =
+        blockedIPs.length;
+
+    document
+        .getElementById("deviceCount")
+        .innerText =
+        devices.length;
+
+    document
+        .getElementById("eventCount")
+        .innerText =
+        logs.length;
+
+    const recent =
+        document.getElementById(
+            "recentThreats"
+        );
+
+    recent.innerHTML =
+        threats.slice(0,3)
+        .map(
+            t => threatHTML(t)
+        )
+        .join("");
+
+}
+
+
+/* =========================
+   THREATS
+========================= */
+
+function threatHTML(t) {
+
+    const severityClass =
+        t.severity.toLowerCase();
+
+    return `
+
+        <div class="threat-card ${severityClass}">
+
+            <h3>
+                🚨 ${t.type}
+            </h3>
+
+            <span class="badge ${severityClass}">
+                ${t.severity}
+            </span>
+
+            <p>
+                IP: ${t.ip}
+            </p>
+
+            <p>
+                Device: ${t.device}
+            </p>
+
+            <p>
+                Status: ${t.status}
+            </p>
+
+            <div class="threat-actions">
+
+                ${
+                    t.status === "Active"
+                    ?
+                    `
+                    <button
+                        class="small-btn success-btn"
+                        onclick="resolveThreat(${t.id})">
+                        Resolve
+                    </button>
+
+                    <button
+                        class="small-btn danger-btn"
+                        onclick="blockIP('${t.ip}')">
+                        Block IP
+                    </button>
+                    `
+                    :
+                    `
+                    <span class="badge low">
+                        ✓ Resolved
+                    </span>
+                    `
+                }
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+function renderThreats() {
+
+    const search =
+        document
+        .getElementById("threatSearch")
+        ?.value
+        .toLowerCase() || "";
+
+    const severity =
+        document
+        .getElementById("severityFilter")
+        ?.value || "All";
+
+    const filtered =
+        threats.filter(t =>
+
+            (
+                t.type.toLowerCase()
+                .includes(search) ||
+
+                t.ip.toLowerCase()
+                .includes(search) ||
+
+                t.device.toLowerCase()
+                .includes(search)
+            )
+
+            &&
+
+            (
+                severity === "All" ||
+                t.severity === severity
+            )
+
+        );
+
+    document
+        .getElementById("threatGrid")
+        .innerHTML =
+        filtered
+        .map(t => threatHTML(t))
+        .join("");
+
+}
+
+
+/* =========================
+   THREAT ACTIONS
+========================= */
+
+function resolveThreat(id) {
+
+    const threat =
+        threats.find(
+            t => t.id === id
+        );
+
+    if (!threat) return;
+
+    threat.status = "Resolved";
+
+    addLog(
+        "Resolved threat: " +
+        threat.type +
+        " from " +
+        threat.ip
+    );
+
+    save();
+
+    renderThreats();
+
+    renderDashboard();
+
+}
+
+
+function blockIP(ip) {
+
+    if (!blockedIPs.includes(ip)) {
+
+        blockedIPs.push(ip);
+
+    }
+
+    addLog(
+        "Blocked suspicious IP: " +
+        ip
+    );
+
+    save();
+
+    alert(
+        ip +
+        " has been added to the block list."
+    );
+
+    renderDashboard();
+
+    renderAdmin();
+
+}
+
+
+/* =========================
+   NETWORK
+========================= */
+
+function renderDevices() {
+
+    document
+        .getElementById("deviceTable")
+        .innerHTML =
+        devices
+        .map(d => `
+
+            <tr>
+
+                <td>${d.name}</td>
+
+                <td>${d.ip}</td>
+
+                <td>${d.type}</td>
+
+                <td>
+
+                    <span class="badge ${
+                        d.status === "Online"
+                        ? "low"
+                        : "medium"
+                    }">
+
+                        ${d.status}
+
+                    </span>
+
+                </td>
+
+                <td>
+
+                    <span class="badge ${
+                        d.risk === "High"
+                        ? "high"
+                        :
+                        d.risk === "Medium"
+                        ? "medium"
+                        : "low"
+                    }">
+
+                        ${d.risk}
+
+                    </span>
+
+                </td>
+
+            </tr>
+
+        `)
+        .join("");
+
+}
+
+
+/* =========================
+   LOGS
+========================= */
+
+function addLog(message) {
+
+    logs.push({
+
+        message,
+
+        time:
+            new Date()
+            .toLocaleString()
+
+    });
+
+    save();
+
+}
+
+
+function renderLogs() {
+
+    const container =
+        document.getElementById(
+            "logsContainer"
+        );
+
+    container.innerHTML =
+        logs
+        .slice()
+        .reverse()
+        .slice(0,30)
+        .map(
+            l => `
+
+                <div class="notification">
+
+                    📋 ${l.message}
+
+                    <br>
+
+                    <small>
+                        ${l.time}
+                    </small>
+
+                </div>
+
+            `
+        )
+        .join("");
+
+}
+
+
+/* =========================
+   PROFILE
+========================= */
+
+function renderProfile() {
+
+    document
+        .getElementById("profileName")
+        .innerText =
+        currentUser.name;
+
+    document
+        .getElementById("profileEmail")
+        .innerText =
+        currentUser.email;
+
+    document
+        .getElementById("avatar")
+        .innerText =
+        currentUser.name
+        .charAt(0)
+        .toUpperCase();
+
+}
+
+
+function changePassword() {
+
+    const newPassword =
+        document
+        .getElementById("newPassword")
+        .value;
+
+    if (newPassword.length < 6) {
+
+        alert(
+            "Password must contain at least 6 characters."
+        );
+
+        return;
+
+    }
+
+    const user =
+        users.find(
+            u =>
+            u.email === currentUser.email
+        );
+
+    user.password = newPassword;
+
+    currentUser.password =
+        newPassword;
+
+    localStorage.setItem(
+        "cyberCurrentUser",
+        JSON.stringify(currentUser)
+    );
+
+    save();
+
+    addLog(
+        "Password changed"
+    );
+
+    alert(
+        "Password updated successfully."
+    );
+
+}
+
+
+/* =========================
+   ADMIN
+========================= */
+
+function renderAdmin() {
+
+    document
+        .getElementById("totalUsers")
+        .innerText =
+        users.length;
+
+    document
+        .getElementById("totalThreats")
+        .innerText =
+        threats.length;
+
+    document
+        .getElementById("blockedIPs")
+        .innerText =
+        blockedIPs.length;
+
+}
+
+
+/* =========================
+   EXPORT REPORT
+========================= */
+
+function exportReport() {
+
+    let report =
+        "CYBERSHIELD SECURITY REPORT\n";
+
+    report +=
+        "============================\n\n";
+
+    report +=
+        "Generated: " +
+        new Date().toLocaleString() +
+        "\n\n";
+
+    report +=
+        "Total Threats: " +
+        threats.length +
+        "\n";
+
+    report +=
+        "Blocked IPs: " +
+        blockedIPs.length +
+        "\n\n";
+
+    threats.forEach(t => {
+
+        report +=
+            `Threat: ${t.type}\n`;
+
+        report +=
+            `IP: ${t.ip}\n`;
+
+        report +=
+            `Device: ${t.device}\n`;
+
+        report +=
+            `Severity: ${t.severity}\n`;
+
+        report +=
+            `Status: ${t.status}\n\n`;
+
+    });
+
+    const blob =
+        new Blob(
+            [report],
+            {
+                type: "text/plain"
+            }
+        );
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const a =
+        document.createElement("a");
+
+    a.href = url;
+
+    a.download =
+        "cybersecurity-report.txt";
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+}
+
+
+/* =========================
+   DARK MODE
+========================= */
+
+function toggleDark() {
+
+    document
+        .body
+        .classList
+        .toggle("dark");
+
+    localStorage.setItem(
+        "cyberDark",
+        document.body.classList.contains("dark")
+    );
+
+}
+
+
+/* =========================
+   STORAGE
+========================= */
+
+function save() {
+
+    localStorage.setItem(
+        "cyberUsers",
+        JSON.stringify(users)
+    );
+
+    localStorage.setItem(
+        "cyberThreats",
+        JSON.stringify(threats)
+    );
+
+    localStorage.setItem(
+        "cyberLogs",
+        JSON.stringify(logs)
+    );
+
+    localStorage.setItem(
+        "blockedIPs",
+        JSON.stringify(blockedIPs)
+    );
+
+}
+
+
+/* =========================
+   SIMULATED LIVE MONITORING
+========================= */
+
+setInterval(() => {
+
+    if (!currentUser) return;
+
+    const random =
+        Math.random();
+
+    if (random > 0.75) {
+
+        const newThreat = {
+
+            id: Date.now(),
+
+            type:
+                random > 0.9
+                ? "Suspicious Login"
+                : "Unusual Network Traffic",
+
+            ip:
+                "192.168.1." +
+                Math.floor(
+                    Math.random() * 200
+                ),
+
+            device:
+                "Network Device",
+
+            severity:
+                random > 0.9
+                ? "High"
+                : "Medium",
+
+            status:
+                "Active"
+
+        };
+
+        threats.unshift(
+            newThreat
+        );
+
+        addLog(
+            "New threat detected: " +
+            newThreat.type
+        );
+
+        save();
+
+        renderDashboard();
+
+        renderThreats();
+
+        renderAdmin();
+
+    }
+
+}, 7000);
+
+
+/* =========================
+   STARTUP
+========================= */
+
+if (
+    localStorage.getItem("cyberDark")
+    === "true"
+) {
+
+    document
+        .body
+        .classList
+        .add("dark");
+
+}
+
+
+if (currentUser) {
+
+    startApp();
+
+}
+
+</script>
+
+</body>
+</html>
